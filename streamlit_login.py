@@ -1,6 +1,7 @@
 """Runs the streamlit dashboard"""
 
 import logging
+from datetime import datetime
 import pandas as pd
 import altair as alt
 import streamlit as st
@@ -8,6 +9,7 @@ import requests
 import psycopg2
 from bs4 import BeautifulSoup
 from streamlit_graphs import get_connection, get_cursor
+from streamlit_option_menu import option_menu
 
 headerSection = st.container()
 mainSection = st.container()
@@ -335,16 +337,19 @@ def insert_into_subscription(user_id, product_id, notification_price):
         return None
 
 
-def insert_initial_price(price, product_id):
+def insert_initial_price(price, product_id) -> None:
     """Inserts initial price data into the price_changes table"""
     conn = get_connection()
     cursor = get_cursor(conn)
     try:
         cursor.execute(
             """INSERT INTO price_changes (price, product_id, timestamp) VALUES (%s, %s, %s);""",
-            (price, product_id, timestamp))
+            (price, product_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        cursor.close()
+        conn.commit()
+        conn.close()
     except Exception as e:
-        st.error(f"Error inserting into the database (subscription): {e}")
+        st.error(f"Error inserting into the database (price_changes): {e}")
         return None
 
 
@@ -353,6 +358,9 @@ def track_product(user_id, url, notification_price):
     website_id = insert_into_website(get_website_from_url(url))
     product_id = insert_into_product(website_id, url)
     insert_into_subscription(user_id, product_id, notification_price)
+    price = (scrape_from_html(get_html_from_url(url), url)).get(
+        "discount_price")
+    insert_initial_price(clean_price(price), product_id)
     st.toast("New product successfully tracked!")
 
 
@@ -374,22 +382,33 @@ def stop_tracking_product(user_id, product_id):
 def show_main_page():
     """Displays the main page on the dashboard"""
     with mainSection:
+        with st.sidebar:
+            page = option_menu(
+                menu_title="Menu", options=["About", "Current products", "Track new products", "Unsubscribe from product tracking"])
         user_id = st.session_state.get('user_id')
-        st.header("Track a new product")
-        url = st.text_input("Enter a new product URL: ")
-        notification_price = st.text_input(
-            label="Enter the price threshold to receive email notifications about price drops: ")
-        st.button("Track", on_click=track_clicked,
-                  args=(user_id, url, notification_price))
-        st.header("Current products")
-        for product_id in get_product_subscription(user_id):
-            product_name, url, original_price = get_product_info(product_id)
-            latest_price = get_latest_price(product_id)
-            st.subheader(f"{product_name}")
-            st.markdown(f"""Current price: £{latest_price}""")
-            st.markdown(f"""Original price: £{original_price}""")
-            st.markdown(f"""Link: {url}""")
-            st.altair_chart(display_charts(product_id))
+        if page == "About":
+            st.header("About")
+            st.markdown("Price Tracker")
+        elif page == "Current products":
+            st.header("Current products")
+            for product_id in get_product_subscription(user_id):
+                product_name, url, original_price = get_product_info(
+                    product_id)
+                latest_price = get_latest_price(product_id)
+                st.subheader(f"{product_name}")
+                st.markdown(f"""Current price: £{latest_price}""")
+                st.markdown(f"""Original price: £{original_price}""")
+                st.markdown(f"""Link: {url}""")
+                st.altair_chart(display_charts(product_id))
+        elif page == "Track new products":
+            st.header("Track a new product")
+            url = st.text_input("Enter a new product URL: ")
+            notification_price = st.text_input(
+                label="Enter the price threshold to receive email notifications about price drops: ")
+            st.button("Track", on_click=track_clicked,
+                      args=(user_id, url, notification_price))
+        elif page == "Unsubscribe from product tracking":
+            ...
 
 
 def LoggedOut_Clicked() -> None:
