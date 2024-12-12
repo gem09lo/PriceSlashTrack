@@ -270,12 +270,12 @@ def show_main_page():
             page = option_menu(
                 menu_title="", options=["About", "Current products", "Track new products"], icons=["question-circle", "bag", "plus-lg"])
             st.button("Log Out", key="logout", on_click=logged_out_clicked)
+
         user_id = st.session_state.get('user_id')
+
         if "current_product" in st.session_state:
             view_product(st.session_state.current_product, user_id)
             return
-        if page == "Home Page":
-            home_page()
         if page == "About":
             show_about_page()
         elif page == "Track new products":
@@ -353,31 +353,38 @@ def track_clicked(user_id, url, notification_price) -> None:
 def show_login_page() -> None:
     """Displays streamlit main page"""
     with login_section:
-        if st.session_state['logged_in'] == False:
+        with st.sidebar:
+            st.title("Price Slashers Login")
+            page = option_menu(
+                menu_title="", options=["Home Page", "Login Page"])
+        if page == "Home Page":
+            home_page()
+        if page == "Login Page":
+            if st.session_state['logged_in'] == False:
 
-            # Login to an existing account
+                # Login to an existing account
 
-            st.header("Existing users")
-            email = st.text_input(
-                label="Email address", value="", placeholder="Enter your email address", key="1")
-            password = st.text_input(
-                label="Password", value="", placeholder="Enter password", type="password", key="2")
-            st.button("Login", on_click=login_clicked,
-                      args=(email, password))
+                st.header("Existing users")
+                email = st.text_input(
+                    label="Email address", value="", placeholder="Enter your email address", key="1")
+                password = st.text_input(
+                    label="Password", value="", placeholder="Enter password", type="password", key="2")
+                st.button("Login", on_click=login_clicked,
+                          args=(email, password))
 
-            # Account creation
+                # Account creation
 
-            st.header("Create an account")
-            first_name = st.text_input(
-                label="First name", placeholder="Enter your first name")
-            last_name = st.text_input(
-                label="Last name", placeholder="Enter your last name")
-            new_email = st.text_input(
-                label="Email address", placeholder="Enter your email address")
-            new_password = st.text_input(
-                label="Password", placeholder="Enter password", type="password")
-            st.button("Create", on_click=create_account_clicked,
-                      args=(first_name, last_name, new_email, new_password))
+                st.header("Create an account")
+                first_name = st.text_input(
+                    label="First name", placeholder="Enter your first name")
+                last_name = st.text_input(
+                    label="Last name", placeholder="Enter your last name")
+                new_email = st.text_input(
+                    label="Email address", placeholder="Enter your email address")
+                new_password = st.text_input(
+                    label="Password", placeholder="Enter password", type="password")
+                st.button("Create", on_click=create_account_clicked,
+                          args=(first_name, last_name, new_email, new_password))
 
 
 if __name__ == "__main__":
