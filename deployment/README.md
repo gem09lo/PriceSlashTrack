@@ -9,3 +9,5 @@ Run the following commands from the **main** directory whilst also completing th
 3. Run `bash deployment/dockerising_step.sh`
 4.  Find the `Image URI` of the `Image` (**not Image Index**) within the ECR: `c14-priceslashers-subscription-checker-repo` and add this to the terraform.tfvars file within the `terraform/terraform-subscriber-lambda` directory. 
 5. Run `bash deployment/final_terraforming.sh`
+
+After running these files, the whole pipeline will run on the cloud and the external address can be found in the CloudWatch logs of the ECS.
