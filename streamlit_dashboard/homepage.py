@@ -4,8 +4,6 @@ Creating a home page to greet customers for our dashboard.
 
 """
 import streamlit as st
-import requests
-import streamlit.components.v1 as components
 
 
 def home_page() -> None:
@@ -38,12 +36,8 @@ def information_section():
     c = st.columns(7)
     with c[1]:
         st.button("Meet Us")
-    with c[3]:
-        st.button("Get Started!")
     with c[5]:
-        st.button("Help Us!")
-
-    components.iframe("https://store.steampowered.com/")
+        st.button("Get Started!")
 
 
 def initial_banner() -> None:
@@ -51,7 +45,7 @@ def initial_banner() -> None:
     page_bg_img = '''
     <style>
     [data-testid="stAppViewContainer"] {
-    background-image: url("https://static.vecteezy.com/system/resources/previews/002/323/313/non_2x/banknotes-rain-money-falling-vector.jpg");
+    background-image: url("https://i.imgur.com/iN0Mejm.jpeg");
     background-size: cover;
     }
 
@@ -74,7 +68,7 @@ def initial_banner() -> None:
 
     st.markdown("""
                 <head>
-                <img src='https://i.imgur.com/VJL4LVo.png' class="border-class">
+                <img src='https://i.imgur.com/7e0ou9L.png' class="border-class">
                 </head>
                 """,
                 unsafe_allow_html=True)
