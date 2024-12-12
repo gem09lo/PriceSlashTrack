@@ -271,6 +271,7 @@ def show_main_page():
             show_about_page()
         elif page == "Track new products":
 <<<<<<< HEAD
+<<<<<<< HEAD
             show_track_page()
         elif page == "Current products":
             show_current_products_page()
@@ -320,6 +321,11 @@ def show_main_page():
                             on_click=lambda: set_product(product[1])
                         )
 >>>>>>> origin/main
+=======
+            show_track_page()
+        elif page == "Current products":
+            show_current_products_page()
+>>>>>>> 4893945b5b5b1d103267861b5534df31615b0a24
 
 
 def set_product(product_id):
