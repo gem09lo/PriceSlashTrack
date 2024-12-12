@@ -8,16 +8,9 @@ import streamlit as st
 
 def home_page() -> None:
     """ Function that runs the whole home page. """
-    st.logo("logo.png", size='large')
-
     initial_banner()
     st.container(height=2, border=False)
-    information_section()
-
-
-def meet_us_button():
-    with st.popover(label="Meet Us!"):
-        st.markdown("Ahahaha")
+    # information_section()
 
 
 def information_section():
