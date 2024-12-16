@@ -460,6 +460,3 @@ def test_get_product_subscription_invalid():
 
             result = get_product_subscription(1)
             assert result == None
-
-
-# 95% - %75
